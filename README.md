@@ -77,7 +77,7 @@ Kiro CLI created the specs, steering, application and tests, then the purpose-bu
 
 See [lesson evidence map](docs/LESSON-EVIDENCE.md), [cloud sample audit](docs/MONEY-REVIEW.md), and the original [Exact Money power](powers/exact-money/README.md) with its [public manifest](powers/exact-money/plugin.json). The power includes a substantive audit skill, references, independent fixture auditor and verification runner.
 
-All seven lesson demonstrations and both bonus development workflows now have actual evidence. The challenge entry is still in preparation: final demo publication, social post, entrant eligibility confirmation and final form submission remain pending. Reviewer acceptance and any credit award are not guaranteed.
+All seven lesson demonstrations and both bonus development workflows now have actual evidence. The challenge entry is still in preparation: social post, entrant eligibility confirmation and final form submission remain pending. Reviewer acceptance and any credit award are not guaranteed.
 
 ## Live app
 

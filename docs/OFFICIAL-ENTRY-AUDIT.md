@@ -26,8 +26,8 @@ Deadline: October 5, 2026, 23:59 Pacific daylight time = October 6, 2026, 12:29 
 
 | Requirement | Current status |
 |---|---|
-| 30-second-to-3-minute public demo, app working and lesson coverage | **Pending final recording/publication** |
-| Video explicitly shows local-versus-cloud engineering/config sync | **Pending video evidence**, actual workflow already completed |
+| 30-second-to-3-minute public demo, app working and lesson coverage | Final video reviewed and publication prepared; see docs/FINAL-VIDEO.md |
+| Video explicitly shows local-versus-cloud engineering/config sync | Actual IDE/cloud/sync screenshots included in revised video |
 | Public X/LinkedIn post | **Pending**; requires repository, public demo, identical 2–3 sentence description, #KiroUniversity #BuildWithKiro and correct tag |
 | Entrant age/residence/exclusions/account ownership | Entrant directly confirmed age 18+, eligible Indian residence, no AWS employee/family/household exclusion and owns Kiro account; detailed personal form fields kept private |
 | GitHub account at least 3 months old | Account created July 5; reaches 3 calendar months October 5 22:08:35 IST. Rules do not clarify calendar-vs-day count or whether development before that point is eligible. **Unresolved organizer interpretation** |

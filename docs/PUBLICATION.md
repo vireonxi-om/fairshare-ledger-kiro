@@ -6,7 +6,7 @@ is triggered, what data the app stores, and the current deployment status.
 
 ## Status
 
-**Deployed and public.** GitHub Pages workflow run 37200682889 completed successfully. The operator checked the public HTML and JavaScript/CSS asset URLs without authentication: all returned HTTP 200. Subsequent pushes publish newer verified source using the same workflow. The final challenge demo video is still pending.
+**Deployed and public.** GitHub Pages workflow run 37200682889 completed successfully. The operator checked the public HTML and JavaScript/CSS asset URLs without authentication: all returned HTTP 200. Subsequent pushes publish newer verified source using the same workflow. The reviewed final video is included in the published bundle.
 
 The workflow is prepared through actual Kiro CLI work; Pages enabling, Git commits/pushes and public-link verification were coordinated by the operator.
 
@@ -78,10 +78,8 @@ described in that documentation.
 
 ## Demo video
 
-If `docs/demo/fairshare-demo.mp4` exists at build time, the workflow copies it
-into `dist/demo/fairshare-demo.mp4` so it is published alongside the app. The
-demo video does **not** exist yet, so this step is currently a no-op and does
-not fail the build.
+If `docs/demo/fairshare-ledger.mp4` exists at build time, the workflow copies it
+into `dist/demo/fairshare-ledger.mp4` so it is published alongside the app. The final video has been supplied and reviewed; the workflow includes it with the app.
 
 ## Data, privacy, and storage
 

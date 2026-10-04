@@ -64,15 +64,15 @@ jobs:
         run: npm run build -- --base=/fairshare-ledger-kiro/
 
       # Copy the demo video into the published bundle only if it exists. The
-      # demo is not created yet, so this is a no-op today and must not fail.
+      # final video has been reviewed and is included with the published app.
       - name: Include demo video if present
         run: |
-          if [ -f docs/demo/fairshare-demo.mp4 ]; then
+          if [ -f docs/demo/fairshare-ledger.mp4 ]; then
             mkdir -p dist/demo
-            cp docs/demo/fairshare-demo.mp4 dist/demo/fairshare-demo.mp4
+            cp docs/demo/fairshare-ledger.mp4 dist/demo/fairshare-ledger.mp4
             echo "Copied demo video into dist/demo/."
           else
-            echo "No docs/demo/fairshare-demo.mp4 found; skipping."
+            echo "No docs/demo/fairshare-ledger.mp4 found; skipping."
           fi
 
       - name: Configure Pages
