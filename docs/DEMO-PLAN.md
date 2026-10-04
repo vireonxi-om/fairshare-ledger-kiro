@@ -1,6 +1,6 @@
 # Final demo recording plan — 2 minutes 45 seconds
 
-The final video is not recorded/published yet. Finish the entrant Kiro IDE property phase first, then record actual screens and real results. Do not insert fabricated chat/screenshots or claim the entry is submitted.
+The final video is not recorded/published yet. The entrant Kiro IDE property phase and its follow-up are completed. Record actual screens and real results from the final app and saved authentic development evidence. Do not insert fabricated chat/screenshots or claim the entry is submitted.
 
 | Time | Actual screen/action |
 |---|---|

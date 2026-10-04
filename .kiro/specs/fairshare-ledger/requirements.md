@@ -154,21 +154,20 @@ assistive technologies.
 
 ---
 
-## Correctness properties (for later property-based tests)
-These universal properties restate the invariants above for the IDE property-test
-phase. Implementation of the property tests is deliberately deferred.
+## Correctness properties
+These properties restate the invariants above. Kiro IDE tasks 11 and 14 implemented and ran the bounded, seeded property tests. See docs/evidence/04-ide-properties.md for actual generators, independent oracles, case counts and coverage limits.
 
-- **P1 — Parse/format round-trip.** For any non-negative amount with ≤ 2 fractional
+- **P1 — Parse/format round-trip.** For any well-formed non-negative amount within MAX_EXPENSE_PAISE with ≤ 2 fractional
   digits, `formatPaise(parseMoneyToPaise(text))` equals the canonical INR
   representation of `text`, and `parseMoneyToPaise` returns a non-negative integer.
   (Req 2.2, 6.5)
-- **P2 — Split conservation.** For any positive amount `A` and any 1–12
-  participants, the sum of equal-split shares equals `A` exactly. (Req 3.3)
+- **P2 — Split conservation.** For any supported positive integer amount `A` and any 1–12 distinct
+  participant IDs, the sum of equal-split shares equals `A` exactly. (Req 3.3)
 - **P3 — Split fairness bound.** For any such split, every pair of shares differs by
   at most 1 paisa. (Req 3.1–3.2)
 - **P4 — Split determinism.** Shuffling participant input order yields identical
   per-ID shares. (Req 3.4)
-- **P5 — Balances sum to zero.** For any ledger, the sum of all participant nets is
+- **P5 — Balances sum to zero.** For any validated ledger within the documented bounds, the sum of all participant nets is
   exactly 0. (Req 4.3)
 - **P6 — Settlement clears balances.** Applying the planned transfers to the nets
   zeroes every participant. (Req 5.4)

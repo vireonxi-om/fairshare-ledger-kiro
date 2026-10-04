@@ -29,7 +29,7 @@ Deadline: October 5, 2026, 23:59 Pacific daylight time = October 6, 2026, 12:29 
 | 30-second-to-3-minute public demo, app working and lesson coverage | **Pending final recording/publication** |
 | Video explicitly shows local-versus-cloud engineering/config sync | **Pending video evidence**, actual workflow already completed |
 | Public X/LinkedIn post | **Pending**; requires repository, public demo, identical 2–3 sentence description, #KiroUniversity #BuildWithKiro and correct tag |
-| Entrant age/residence/exclusions/account ownership | Entrant directly confirmed age18+, eligible Indian residence, no AWS employee/family/household exclusion and owns Kiro account; detailed personal form fields kept private |
+| Entrant age/residence/exclusions/account ownership | Entrant directly confirmed age 18+, eligible Indian residence, no AWS employee/family/household exclusion and owns Kiro account; detailed personal form fields kept private |
 | GitHub account at least 3 months old | Account created July 5; reaches 3 calendar months October 5 22:08:35 IST. Rules do not clarify calendar-vs-day count or whether development before that point is eligible. **Unresolved organizer interpretation** |
 | Single individual entry, consistent GitHub/social identity | Chosen X profile authenticated and matched to entrant name; single-entry attestation still required |
 | Correct Kiro email/userID and personal fields | Collect accurately in private form preparation |
@@ -45,3 +45,5 @@ Completing seven lesson demonstrations does not mean the entry is submitted or e
 ## Repair verification from this audit
 
 Concrete source/packaging gaps were reproduced and repaired through Kiro CLI: empty/reused domain IDs, local expense-date default, stale payer/split state, incomplete power schema checks, missing license files and incorrect Node requirements. Final suite 101 tests/14 files; typecheck/build clean; zero npm vulnerabilities; original IDE properties unchanged. Power manifest validates; 1 accepted and 11 rejected fixtures have exact expected exit codes and agree with JSON Schema. See 13-final-project-audit.md for authentic chronology, including the second pass that closed remaining date-pattern/schemaVersion mismatches.
+
+Latest repair deployment: GitHub Actions run 37202756998 completed successfully for commit 77822c4. The public app was loaded in an isolated browser context and its React interface rendered. This confirms deployment/rendering; interactive workflow recording remains pending because current user preference reserves UI clicks to the entrant.
