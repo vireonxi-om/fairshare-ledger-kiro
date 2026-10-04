@@ -1,0 +1,16 @@
+{
+  "version": "v1",
+  "hooks": [
+    {
+      "name": "Typecheck after turn",
+      "description": "After the agent finishes a turn, run `npm run typecheck` (tsc --noEmit) via scripts/check-after-turn.mjs. The wrapper skips while a guardian/concurrent-edit lock is active and records a privacy-safe run record under the gitignored .execution/hook-runs/. On type errors it reports a short summary back to the agent so the next turn can fix them.",
+      "trigger": "Stop",
+      "action": {
+        "type": "command",
+        "command": "node scripts/check-after-turn.mjs"
+      },
+      "timeout": 120,
+      "enabled": true
+    }
+  ]
+}
