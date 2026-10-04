@@ -77,7 +77,19 @@ Findings were reproduced against the actual phase-1 code before any fix (see
 - [x] R7. Update spec/steering/README honestly and record evidence in
   `docs/evidence/07-money-guardian.md`.
 
-## Deferred to later phases (not phase 1)
-- [ ] 11. Property-based tests (fast-check) implementing P1–P9 — **IDE phase**.
-- [ ] 12. Hook configuration/trigger — later phase.
-- [ ] 13. Power / MCP / custom agent work — later phases.
+## Kiro feature demonstrations
+- [x] 11. Property-based tests (fast-check) implementing P1–P9 — **IDE phase**.
+- [x] 12. Hook configuration/trigger — actual automatic stop hook, see docs/evidence/06-hook-run.json.
+- [x] 13. Power / MCP / custom agent work — actual Kiro usage, see docs/LESSON-EVIDENCE.md.
+
+## IDE property coverage follow-up
+
+- [x] 14. Strengthen property test coverage through Kiro IDE.
+  - Add a localStorage spy/mock with valid serialized sentinel to rejected-import properties; require rejection, no storage writes/removals and unchanged bytes.
+  - Generate aggregate-overflow imports where each expense individually satisfies MAX_EXPENSE_PAISE but their total exceeds MAX_LEDGER_TOTAL_PAISE.
+  - Replace silent skipping of rejected generated expenses with independent raw valid-ledger construction or assert every generated expense is accepted.
+  - Add independent BigInt per-participant paid/share/net recomputation from raw expenses, sorted IDs and quotient/remainder.
+  - Use explicit seeds and at least 500 cases per property; run property/full tests, typecheck, build, audit through Kiro IDE.
+  - Update docs/evidence/04-ide-properties.md with real outcome and coverage limitations; mark task 14 complete only after passing.
+  - Do not alter production source or commit/publish.
+  - _Requirements: 3.x, 4.x, 7.4–7.5. Properties: P5/P9._

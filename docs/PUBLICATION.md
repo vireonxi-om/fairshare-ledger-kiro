@@ -6,11 +6,9 @@ is triggered, what data the app stores, and the current deployment status.
 
 ## Status
 
-**Not yet deployed.** The workflow and this document have been *prepared* but no
-deployment has run. Pages has not been enabled on the repository, and no live
-build or URL has been verified. Enabling Pages and verifying the first live
-build is an explicit operator step (see "Enabling Pages" below). Nothing in this
-change commits, pushes, or alters repository/account settings on its own.
+**Deployed and public.** GitHub Pages workflow run 37200682889 completed successfully. The operator checked the public HTML and JavaScript/CSS asset URLs without authentication: all returned HTTP 200. Subsequent pushes publish newer verified source using the same workflow. The final challenge demo video is still pending.
+
+The workflow is prepared through actual Kiro CLI work; Pages enabling, Git commits/pushes and public-link verification were coordinated by the operator.
 
 ## Expected public URL
 
@@ -20,7 +18,7 @@ Once deployed, the site is expected to be served at:
 
 This is a GitHub **project** Pages URL, so the site lives under the
 `/fairshare-ledger-kiro/` sub-path rather than at a domain root. The build is
-produced with `vite build -- --base=/fairshare-ledger-kiro/` so that all
+produced with `npm run build -- --base=/fairshare-ledger-kiro/` so that all
 JavaScript, CSS, and other asset references resolve correctly under that
 sub-path. Local development (`npm run dev`) is unaffected and continues to serve
 from `/`, because the base path is passed only in the Pages build and is not

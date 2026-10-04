@@ -31,7 +31,7 @@ server, no tracking.
 
 The spec lives under [`.kiro/specs/fairshare-ledger/`](.kiro/specs/fairshare-ledger/)
 (requirements in EARS format, design, tasks). Correctness properties P1–P9 are
-documented there; their property-based tests are implemented in a later phase.
+documented there and implemented through the actual Kiro IDE spec workflow.
 
 ## Project layout
 ```
@@ -60,7 +60,7 @@ npm run typecheck  # tsc --noEmit
 ```
 
 ## Testing
-The current verified suite has 63 example and integration tests: domain and persistence suites under `src/**/*.test.ts`, plus a real App StrictMode regression under `src/App.test.tsx`. `npm run test` runs separate Node and jsdom projects. Property-based tests are still pending the entrant's Kiro IDE session; see [the exact handoff](docs/IDE-PROPERTY-TEST-HANDOFF.md).
+The verified suite has **92 tests across 13 files**, including 25 seeded properties with 500 cases each, a 500-ledger shape sample, examples and a real App StrictMode regression. `npm run test` runs separate Node and jsdom projects. Property tests were developed and run through Kiro IDE; see [actual IDE evidence](docs/evidence/04-ide-properties.md). The properties cover exact parsing, split conservation/fairness/order, independent BigInt balances, settlement simulation, roundtrip and rejected imports with storage spies and aggregate boundary controls. These bounded randomized checks are evidence, not formal proof.
 
 ## Privacy
 All ledger data stays in your browser's localStorage. The app makes no network
@@ -72,4 +72,8 @@ Kiro CLI created the specs, steering, application and tests, then the purpose-bu
 
 See [lesson evidence map](docs/LESSON-EVIDENCE.md), [cloud sample audit](docs/MONEY-REVIEW.md), and the original [Exact Money power](powers/exact-money/README.md) with its [public manifest](powers/exact-money/plugin.json). The power includes a substantive audit skill, references, independent fixture auditor and verification runner.
 
-The challenge entry is still in preparation. IDE property evidence, final demo, social post, entrant eligibility confirmation and final form submission remain pending. Reviewer acceptance and any credit award are not guaranteed.
+All seven lesson demonstrations and both bonus development workflows now have actual evidence. The challenge entry is still in preparation: final demo publication, social post, entrant eligibility confirmation and final form submission remain pending. Reviewer acceptance and any credit award are not guaranteed.
+
+## Live app
+
+Published at https://vireonxi-om.github.io/fairshare-ledger-kiro/ through the repository GitHub Pages workflow. The public HTML and bundled assets were checked without authentication.

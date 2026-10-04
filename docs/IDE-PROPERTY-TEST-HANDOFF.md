@@ -1,6 +1,6 @@
 # Your one Kiro IDE task — property-based testing
 
-Status: READY FOR YOUR KIRO IDE SESSION. The six non-IDE lessons have actual evidence and the reviewed core passes 63 example/integration tests, TypeScript and the production build. Lesson 4 is NOT completed. Ordinary CLI test execution does not establish the IDE-only lesson. The operator will avoid app source changes during your IDE work.
+Status: COMPLETED AND VERIFIED. The entrant executed the supplied prompt and follow-up through Kiro IDE 1.2.4. Tasks 11 and 14 are complete; 92 tests, TypeScript, production build and npm audit pass. The original instructions below are preserved as the actual handoff, not an outstanding task. See docs/evidence/04-ide-properties.md.
 
 ## Steps
 1. Open `/home/vixa/Desktop/CODEX SESSIONS/kiro` in your signed-in Kiro IDE.
