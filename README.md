@@ -43,7 +43,12 @@ src/
 ```
 
 ## Getting started
-Requires Node 20.19+ or 22.12+ (Vite 8 / Vitest 5 toolchain) and npm.
+Requires Node **22.22.2+, 24.15.0+, or >=26** and npm. This is the intersection
+of the installed toolchain's own `engines`: `vitest@5` needs
+`^22.12 || ^24 || >=26` and `jsdom@30` needs `^22.22.2 || ^24.15 || >=26`, so
+the stricter `jsdom` range governs. The same range is declared in
+`package.json` `engines`. (Verified against the project's workflow and local
+runs on Node 24.)
 
 ```bash
 npm ci
@@ -55,12 +60,12 @@ npm run dev        # start the dev server
 npm run dev        # Vite dev server
 npm run build      # type-check (tsc --noEmit) then production build to dist/
 npm run preview    # preview the production build
-npm run test       # run example (unit) tests once with Vitest
+npm run test       # run property, unit and UI regression tests with Vitest
 npm run typecheck  # tsc --noEmit
 ```
 
 ## Testing
-The verified suite has **92 tests across 13 files**, including 25 seeded properties with 500 cases each, a 500-ledger shape sample, examples and a real App StrictMode regression. `npm run test` runs separate Node and jsdom projects. Property tests were developed and run through Kiro IDE; see [actual IDE evidence](docs/evidence/04-ide-properties.md). The properties cover exact parsing, split conservation/fairness/order, independent BigInt balances, settlement simulation, roundtrip and rejected imports with storage spies and aggregate boundary controls. These bounded randomized checks are evidence, not formal proof.
+The verified suite has **101 tests across 14 files**, including 25 seeded properties with 500 cases each, a 500-ledger shape sample, examples and a real App StrictMode regression. `npm run test` runs separate Node and jsdom projects. Property tests were developed and run through Kiro IDE; see [actual IDE evidence](docs/evidence/04-ide-properties.md). The properties cover exact parsing, split conservation/fairness/order, independent BigInt balances, settlement simulation, roundtrip and rejected imports with storage spies and aggregate boundary controls. These bounded randomized checks are evidence, not formal proof.
 
 ## Privacy
 All ledger data stays in your browser's localStorage. The app makes no network
@@ -77,3 +82,7 @@ All seven lesson demonstrations and both bonus development workflows now have ac
 ## Live app
 
 Published at https://vireonxi-om.github.io/fairshare-ledger-kiro/ through the repository GitHub Pages workflow. The public HTML and bundled assets were checked without authentication.
+
+## Entrant and public identity
+
+Created for this individual entry by OMSHAKTHI S L. GitHub: `vireonxi-om`; chosen public X profile: https://x.com/VIREONXII . Kiro was the primary development tool; the development evidence map records actual usage.

@@ -1,4 +1,4 @@
-import { useId, useState } from "react";
+import { useEffect, useId, useState } from "react";
 import type { Ledger } from "../domain/types";
 import { MIN_PARTICIPANTS } from "../domain/types";
 import { addExpense } from "../domain/ledger";
@@ -9,8 +9,19 @@ interface Props {
   onChange: (next: Ledger) => void;
 }
 
+/**
+ * Today's date as "YYYY-MM-DD" using the browser's *local* calendar
+ * components. Using `new Date().toISOString()` would format in UTC, which puts
+ * the default on the wrong calendar day for users east of UTC before their
+ * local offset elapses (e.g. before 05:30 IST in India). getFullYear/getMonth/
+ * getDate read the local date, so the default always matches the user's day.
+ */
 function todayISO(): string {
-  return new Date().toISOString().slice(0, 10);
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, "0");
+  const day = String(now.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
 }
 
 export function ExpenseForm({ ledger, onChange }: Props) {
@@ -27,6 +38,21 @@ export function ExpenseForm({ ledger, onChange }: Props) {
   const [error, setError] = useState<string | null>(null);
 
   const ready = ledger.participants.length >= MIN_PARTICIPANTS;
+
+  // When the ledger is replaced (import / sample / reset) or a participant is
+  // deleted, drop any selected payer or split members that no longer exist.
+  // Otherwise the form could submit a stale payer/split id that addExpense
+  // would reject, or silently reference a participant from the old ledger.
+  useEffect(() => {
+    const existing = new Set(ledger.participants.map((p) => p.id));
+    if (payer && !existing.has(payer)) {
+      setPayer("");
+    }
+    setSplitIds((prev) => {
+      const pruned = prev.filter((id) => existing.has(id));
+      return pruned.length === prev.length ? prev : pruned;
+    });
+  }, [ledger.participants, payer]);
 
   function toggleSplit(id: string) {
     setSplitIds((prev) =>

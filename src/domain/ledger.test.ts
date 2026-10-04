@@ -199,3 +199,74 @@ describe("validation", () => {
     expect(validateLedger(bad)).toBeNull();
   });
 });
+
+describe("identity validation (regression: helpers must not emit invalid ledgers)", () => {
+  function freeze<T>(v: T): T {
+    return Object.freeze(v) as T;
+  }
+
+  it("addParticipant rejects an empty / whitespace id without mutating input", () => {
+    const input = freeze(emptyLedger());
+    const empty = addParticipant(input, "", "Asha");
+    expect(empty.ok).toBe(false);
+    const blank = addParticipant(input, "   ", "Asha");
+    expect(blank.ok).toBe(false);
+    // Input object is unchanged.
+    expect(input.participants).toHaveLength(0);
+  });
+
+  it("addParticipant rejects a duplicate id and leaves the ledger unchanged", () => {
+    let l = emptyLedger();
+    l = (addParticipant(l, "p1", "Asha") as { value: typeof l }).value;
+    const before = l;
+    const dup = addParticipant(before, "p1", "Bijay");
+    expect(dup.ok).toBe(false);
+    expect(before.participants).toHaveLength(1);
+  });
+
+  it("every ledger addParticipant produces still validates", () => {
+    let l = emptyLedger();
+    const r1 = addParticipant(l, "p1", "Asha");
+    expect(r1.ok).toBe(true);
+    if (r1.ok) {
+      l = r1.value;
+      expect(validateLedger(l)).not.toBeNull();
+    }
+  });
+
+  it("addExpense rejects empty and duplicate expense ids without mutating input", () => {
+    let l = base();
+    const good = addExpense(l, "e1", {
+      title: "Lunch", payerId: "a", amountText: "10", dateISO: "2026-01-01", splitIds: ["a", "b"],
+    });
+    expect(good.ok).toBe(true);
+    if (good.ok) l = good.value;
+    const frozen = Object.freeze(l);
+    const dup = addExpense(frozen, "e1", {
+      title: "Lunch2", payerId: "a", amountText: "10", dateISO: "2026-01-01", splitIds: ["a", "b"],
+    });
+    expect(dup.ok).toBe(false);
+    const empty = addExpense(frozen, "   ", {
+      title: "Lunch3", payerId: "a", amountText: "10", dateISO: "2026-01-01", splitIds: ["a", "b"],
+    });
+    expect(empty.ok).toBe(false);
+    expect(frozen.expenses).toHaveLength(1);
+  });
+
+  it("addExpense requires at least two participants (matches UI gate)", () => {
+    let l = emptyLedger();
+    l = (addParticipant(l, "a", "Solo") as { value: typeof l }).value;
+    const r = addExpense(l, "e1", {
+      title: "X", payerId: "a", amountText: "10", dateISO: "2026-01-01", splitIds: ["a"],
+    });
+    expect(r.ok).toBe(false);
+  });
+
+  it("a ledger built only through helpers always passes validateLedger", () => {
+    let l = base();
+    l = (addExpense(l, "e1", {
+      title: "Groceries", payerId: "a", amountText: "99.99", dateISO: "2026-03-01", splitIds: ["a", "b"],
+    }) as { value: typeof l }).value;
+    expect(validateLedger(l)).not.toBeNull();
+  });
+});

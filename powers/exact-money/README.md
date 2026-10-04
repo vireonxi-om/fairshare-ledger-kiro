@@ -93,8 +93,10 @@ OK: fixtures/valid-ledger.json passed all exact-money checks.
 
 ### Verify the power
 
-The `verify` command proves the auditor accepts the valid fixture and rejects
-the invalid one:
+The `verify` command proves the auditor accepts the valid fixture (exit exactly
+0) and rejects every invalid fixture (exit exactly 1). Each fixture under
+`fixtures/reject/` is otherwise valid and carries exactly one structural fault,
+so each rule is proven independently:
 
 ```
 node verify.mjs
@@ -103,8 +105,18 @@ node verify.mjs
 ```
 OK   valid-ledger.json accepted (exit 0)
 OK   invalid-ledger.json rejected (exit 1)
+OK   reject/bad-date-pattern.json rejected (exit 1)
+OK   reject/bad-title-type.json rejected (exit 1)
+OK   reject/extra-expense-key.json rejected (exit 1)
+OK   reject/extra-participant-key.json rejected (exit 1)
+OK   reject/extra-root-key.json rejected (exit 1)
+OK   reject/missing-date.json rejected (exit 1)
+OK   reject/missing-title.json rejected (exit 1)
+OK   reject/no-schema-version.json rejected (exit 1)
+OK   reject/schema-version-overflow.json rejected (exit 1)
+OK   reject/schema-version-zero.json rejected (exit 1)
 
-VERIFY PASS: auditor accepts valid and rejects invalid.
+VERIFY PASS: 1 accepted (exit 0), 11 rejected (exit 1).
 ```
 
 ## Normalized ledger shape
@@ -116,7 +128,11 @@ The auditor expects the shape documented in
 {
   "schemaVersion": 1,
   "currency": "INR",
-  "participants": [{ "id": "p1", "name": "Asha" }],
+  "participants": [
+    { "id": "p1", "name": "Asha" },
+    { "id": "p2", "name": "Bijay" },
+    { "id": "p3", "name": "Chandni" }
+  ],
   "expenses": [
     {
       "id": "e1",
@@ -143,7 +159,8 @@ exact-money/
 ├─ verify.mjs                          # proves accept-valid / reject-invalid
 ├─ fixtures/
 │  ├─ valid-ledger.json
-│  └─ invalid-ledger.json
+│  ├─ invalid-ledger.json
+│  └─ reject/                          # one structural fault per fixture
 └─ skills/
    └─ money-audit/
       ├─ SKILL.md
@@ -171,7 +188,7 @@ exact-money/
   skill covers decimal-to-paise parsing, but the script does not re-parse text.
 - **Not a substitute for property-based tests.** The auditor checks concrete
   fixtures/data; `references/oracle-patterns.md` shows how to lift the same
-  invariants into exhaustive property tests in your own codebase.
+  invariants into bounded randomized property tests in your own codebase.
 - **No external effects.** The power reads local JSON only; it makes no network
   calls and transmits no data.
 

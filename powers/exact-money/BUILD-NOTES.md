@@ -148,3 +148,92 @@ most `n − 1` transfers, as reported by the `balances-zero-sum`,
   later and are not asserted here.
 - No claim of registry acceptance, cloud session usage, or credit consumption.
 - No public publishing or commits were performed as part of this task.
+
+## Update — final audit repairs (2026-10-04)
+
+The sections above record the original packaging run and are left unchanged as
+historical evidence. A later final-audit pass hardened the auditor and schema;
+the current state differs from the original recorded output as follows:
+
+- The auditor (`skills/money-audit/scripts/audit-ledger.mjs`) now enforces the
+  full structural contract from `references/ledger-schema.json`: `schemaVersion`
+  (required integer ≥ 1), `title` (required non-empty string), `date` (required
+  non-empty string), and `additionalProperties: false` on the ledger root,
+  participants, and expenses (unexpected keys are rejected). Previously these
+  were silently ignored, so a document missing `schemaVersion`/`title`/`date` or
+  carrying extra keys could pass. Reproduced before fixing.
+- Added fixture `fixtures/invalid-schema.json` — a document that is internally
+  consistent for money math but violates the structural contract (no
+  `schemaVersion`, an extra top-level key, an extra participant key, and missing
+  `title`/`date`). The auditor rejects it with 5 structural failures (exit 1).
+- `verify.mjs` now also asserts `invalid-schema.json` is rejected. Current
+  output:
+
+  ```
+  OK   valid-ledger.json accepted (exit 0)
+  OK   invalid-ledger.json rejected (exit 1)
+  OK   invalid-schema.json rejected (exit 1)
+
+  VERIFY PASS: auditor accepts valid and rejects invalid.
+  ```
+
+- `references/ledger-schema.json` gained explicit safe-integer `maximum`
+  (`9007199254740991`) on `schemaVersion` and `amountPaise`, and a
+  `YYYY-MM-DD` `pattern` plus `minLength` on `date`. The previously valid and
+  invalid fixtures keep their expectations (valid passes; invalid rejected).
+- Added an MIT `LICENSE` file to this power directory to back the `MIT` license
+  declared in `plugin.json`; previously no license file existed.
+- Corrected the "exhaustive property tests" wording in `README.md` and
+  `references/oracle-patterns.md` to "bounded randomized property tests"
+  (property-based tests sample inputs; they are not an exhaustive proof).
+- Fixed the normalized-ledger example in `README.md`, which listed only `p1`
+  but referenced `p1,p2,p3` in `splitMemberIds`; it now defines all three
+  participants.
+
+## Update — final-review follow-up (2026-10-04)
+
+A final review found two residual auditor/schema mismatches, reproduced before
+fixing:
+
+- `date: "today"` passed the auditor (exit 0) but the JSON Schema rejected it on
+  the `YYYY-MM-DD` pattern. The auditor now enforces the exact
+  `^\d{4}-\d{2}-\d{2}$` shape (no calendar-validity promise beyond the pattern,
+  matching the schema and the "not used in money math" note).
+- `schemaVersion: 9007199254740992` (2^53, beyond `Number.MAX_SAFE_INTEGER`)
+  passed the auditor but the JSON Schema rejected it on `maximum`. The auditor
+  now requires `schemaVersion` to be an integer in `[1, 9007199254740991]`.
+
+Fixture layout changed to prevent a combined fixture from masking a missing
+check:
+
+- Removed the single combined `fixtures/invalid-schema.json`.
+- Added `fixtures/reject/` with ten fixtures, each otherwise valid and carrying
+  exactly ONE structural fault: `no-schema-version`, `schema-version-overflow`,
+  `schema-version-zero`, `extra-root-key`, `extra-participant-key`,
+  `extra-expense-key`, `missing-title`, `bad-title-type`, `missing-date`,
+  `bad-date-pattern`.
+- `verify.mjs` now requires accepted fixtures to exit **exactly 0** and every
+  rejection fixture to exit **exactly 1** — a `null` status (spawn failure) or
+  exit `2` (usage/IO) no longer counts as a rejection. It iterates every file in
+  `fixtures/reject/`. Current output:
+
+  ```
+  OK   valid-ledger.json accepted (exit 0)
+  OK   invalid-ledger.json rejected (exit 1)
+  OK   reject/bad-date-pattern.json rejected (exit 1)
+  OK   reject/bad-title-type.json rejected (exit 1)
+  OK   reject/extra-expense-key.json rejected (exit 1)
+  OK   reject/extra-participant-key.json rejected (exit 1)
+  OK   reject/extra-root-key.json rejected (exit 1)
+  OK   reject/missing-date.json rejected (exit 1)
+  OK   reject/missing-title.json rejected (exit 1)
+  OK   reject/no-schema-version.json rejected (exit 1)
+  OK   reject/schema-version-overflow.json rejected (exit 1)
+  OK   reject/schema-version-zero.json rejected (exit 1)
+
+  VERIFY PASS: 1 accepted (exit 0), 11 rejected (exit 1).
+  ```
+
+Runtime auditor and the JSON Schema (`jsonschema` Draft 2020-12) now agree on
+every fixture: the valid fixture is accepted by both, and all 11 rejection
+fixtures are rejected by both.

@@ -112,4 +112,6 @@ Useful input generators when wiring these into a PBT framework:
 
 The bundled `scripts/audit-ledger.mjs` applies P2, P5, P6, P7 (and basic
 integer/membership checks) to a concrete fixture; the generators above let you
-extend the same invariants to exhaustive property tests in the user's code.
+extend the same invariants to bounded randomized property tests in the user's
+code. Such tests sample many cases per run but are not an exhaustive proof over
+all inputs.

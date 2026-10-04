@@ -21,6 +21,13 @@ import { readFileSync } from "node:fs";
 
 const MAX_SAFE = Number.MAX_SAFE_INTEGER;
 
+// Exact date shape the schema requires (references/ledger-schema.json pattern).
+// This checks the YYYY-MM-DD *shape* only; it makes no calendar-validity promise
+// (e.g. it does not reject 2026-02-31). That matches the schema, which carries a
+// pattern but no calendar constraint, and the note that `date` is not used in
+// money math.
+const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
+
 /** Collected problems; empty means the ledger passed. */
 class Report {
   constructor() {
@@ -45,6 +52,28 @@ function isPlainObject(v) {
 
 function isSafePositiveInt(v) {
   return Number.isInteger(v) && v >= 1 && v <= MAX_SAFE;
+}
+
+// Allowed keys per references/ledger-schema.json (additionalProperties: false).
+const LEDGER_KEYS = new Set([
+  "schemaVersion",
+  "currency",
+  "participants",
+  "expenses",
+]);
+const PARTICIPANT_KEYS = new Set(["id", "name"]);
+const EXPENSE_KEYS = new Set([
+  "id",
+  "title",
+  "payerId",
+  "amountPaise",
+  "date",
+  "splitMemberIds",
+]);
+
+/** Report any keys on `obj` not present in `allowed`. */
+function extraKeys(obj, allowed) {
+  return Object.keys(obj).filter((k) => !allowed.has(k));
 }
 
 /**
@@ -99,6 +128,23 @@ function validateStructure(ledger, report) {
     report.fail("structure", "ledger root is not an object");
     return false;
   }
+  // schemaVersion: required integer >= 1 and within safe-integer range (schema:
+  // minimum 1, maximum Number.MAX_SAFE_INTEGER). Beyond MAX_SAFE a JSON number
+  // can no longer be represented exactly, so it is rejected rather than coerced.
+  if (
+    !Number.isInteger(ledger.schemaVersion) ||
+    ledger.schemaVersion < 1 ||
+    ledger.schemaVersion > MAX_SAFE
+  ) {
+    report.fail(
+      "schemaVersion",
+      `expected an integer in [1, ${MAX_SAFE}], got ${JSON.stringify(ledger.schemaVersion)}`,
+    );
+  }
+  const rootExtra = extraKeys(ledger, LEDGER_KEYS);
+  if (rootExtra.length > 0) {
+    report.fail("structure", `unexpected top-level key(s): ${rootExtra.join(", ")}`);
+  }
   if (ledger.currency !== "INR") {
     report.fail("currency", `expected "INR", got ${JSON.stringify(ledger.currency)}`);
   }
@@ -117,6 +163,10 @@ function validateStructure(ledger, report) {
       report.fail("participant.id", `invalid participant entry ${JSON.stringify(p)}`);
       return false;
     }
+    const pExtra = extraKeys(p, PARTICIPANT_KEYS);
+    if (pExtra.length > 0) {
+      report.fail("participant", `participant ${p.id} has unexpected key(s): ${pExtra.join(", ")}`);
+    }
     if (ids.has(p.id)) {
       report.fail("participant.id", `duplicate participant id ${JSON.stringify(p.id)}`);
     }
@@ -132,11 +182,21 @@ function validateStructure(ledger, report) {
       report.fail("expense.id", `invalid expense entry ${JSON.stringify(e)}`);
       return false;
     }
+    const eExtra = extraKeys(e, EXPENSE_KEYS);
+    if (eExtra.length > 0) {
+      report.fail("expense", `expense ${e.id} has unexpected key(s): ${eExtra.join(", ")}`);
+    }
     if (expenseIds.has(e.id)) {
       report.fail("expense.id", `duplicate expense id ${JSON.stringify(e.id)}`);
     }
     expenseIds.add(e.id);
 
+    if (typeof e.title !== "string" || e.title.length < 1) {
+      report.fail("expense.title", `expense ${e.id} title must be a non-empty string, got ${JSON.stringify(e.title)}`);
+    }
+    if (typeof e.date !== "string" || !DATE_RE.test(e.date)) {
+      report.fail("expense.date", `expense ${e.id} date must match YYYY-MM-DD, got ${JSON.stringify(e.date)}`);
+    }
     if (!isSafePositiveInt(e.amountPaise)) {
       report.fail(
         "expense.amountPaise",

@@ -10,7 +10,8 @@
     "schemaVersion": {
       "type": "integer",
       "minimum": 1,
-      "description": "Version of this normalized ledger shape."
+      "maximum": 9007199254740991,
+      "description": "Version of this normalized ledger shape. Integer >= 1."
     },
     "currency": {
       "type": "string",
@@ -64,10 +65,13 @@
           "amountPaise": {
             "type": "integer",
             "minimum": 1,
-            "description": "Positive integer paise. Must stay within Number.MAX_SAFE_INTEGER individually and in aggregate."
+            "maximum": 9007199254740991,
+            "description": "Positive integer paise. Must stay within Number.MAX_SAFE_INTEGER (9007199254740991) individually and in aggregate."
           },
           "date": {
             "type": "string",
+            "minLength": 1,
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
             "description": "ISO date (YYYY-MM-DD). Not used in money math; carried for completeness."
           },
           "splitMemberIds": {

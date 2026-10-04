@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "currency": "INR",
+  "participants": [
+    {
+      "id": "p1",
+      "name": "Asha",
+      "nickname": "A"
+    },
+    {
+      "id": "p2",
+      "name": "Bijay"
+    },
+    {
+      "id": "p3",
+      "name": "Chandni"
+    }
+  ],
+  "expenses": [
+    {
+      "id": "e1",
+      "title": "Groceries",
+      "payerId": "p1",
+      "amountPaise": 1000,
+      "date": "2026-01-05",
+      "splitMemberIds": [
+        "p1",
+        "p2",
+        "p3"
+      ]
+    }
+  ]
+}

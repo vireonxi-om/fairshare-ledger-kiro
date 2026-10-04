@@ -15,6 +15,7 @@ import {
   SCHEMA_VERSION,
   MAX_NAME_LEN,
   MAX_PARTICIPANTS,
+  MIN_PARTICIPANTS,
   MAX_TITLE_LEN,
   MAX_EXPENSE_PAISE,
   MAX_LEDGER_TOTAL_PAISE,
@@ -46,6 +47,14 @@ export function addParticipant(
   id: string,
   rawName: string,
 ): Result<Ledger> {
+  // Identity validation: a stable, non-empty, unique id is required so this
+  // helper can never emit a ledger that validateLedger would later reject.
+  if (typeof id !== "string" || id.trim().length === 0) {
+    return err("Participant id must be a non-empty stable identifier.");
+  }
+  if (ledger.participants.some((p) => p.id === id)) {
+    return err("Participant id must be unique.");
+  }
   const name = rawName.trim();
   if (name.length < 1) return err("Participant name cannot be empty.");
   if (name.length > MAX_NAME_LEN) {
@@ -98,6 +107,23 @@ export function addExpense(
   id: string,
   input: ExpenseInput,
 ): Result<Ledger> {
+  // Identity validation: a stable, non-empty, unique id is required so this
+  // helper can never emit a ledger that validateLedger would later reject.
+  if (typeof id !== "string" || id.trim().length === 0) {
+    return err("Expense id must be a non-empty stable identifier.");
+  }
+  if (ledger.expenses.some((e) => e.id === id)) {
+    return err("Expense id must be unique.");
+  }
+
+  // An expense requires at least MIN_PARTICIPANTS people in the ledger, matching
+  // the product/spec requirement and the UI gate in ExpenseForm.
+  if (ledger.participants.length < MIN_PARTICIPANTS) {
+    return err(
+      `Add at least ${MIN_PARTICIPANTS} participants before recording an expense.`,
+    );
+  }
+
   const title = input.title.trim();
   if (title.length < 1) return err("Expense title cannot be empty.");
   if (title.length > MAX_TITLE_LEN) {
