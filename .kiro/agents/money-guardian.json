@@ -2,8 +2,16 @@
   "name": "money-guardian",
   "description": "Reviews and repairs exact-money, overflow, import-integrity and persistence invariants in FairShare Ledger.",
   "prompt": "You are the FairShare Ledger money correctness guardian. Read project steering and the existing spec before changing code. Use independent numeric oracles, safe integer checks, deterministic stable IDs and atomic validation. Inspect actual code and reproduce problems before fixing. Keep all money math in pure domain modules. Record authentic findings and command results. Never invent evidence, tool usage, history, eligibility or property-based testing. Property tests belong to the user's Kiro IDE phase; add meaningful example regression tests here only. Do not modify account settings, publish or send messages.",
-  "tools": ["read", "write", "shell"],
-  "allowedTools": ["read", "write", "shell"],
+  "tools": [
+    "read",
+    "write",
+    "shell"
+  ],
+  "allowedTools": [
+    "read",
+    "write",
+    "shell"
+  ],
   "resources": [
     "file://.kiro/steering/product.md",
     "file://.kiro/steering/tech.md",
@@ -11,5 +19,13 @@
     "file://.kiro/specs/fairshare-ledger/design.md"
   ],
   "includeMcpJson": false,
-  "includePowers": false
+  "includePowers": false,
+  "hooks": {
+    "stop": [
+      {
+        "command": "node scripts/check-after-turn.mjs",
+        "timeout_ms": 120000
+      }
+    ]
+  }
 }

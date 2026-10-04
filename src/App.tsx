@@ -39,11 +39,18 @@ export default function App() {
   return (
     <div className="app-shell">
       <header className="app-header">
-        <h1>FairShare Ledger</h1>
-        <p>
-          Split shared expenses with exact paise math and a deterministic
-          settlement plan. Local-first — your data never leaves this browser.
-        </p>
+        <div className="brand">
+          <span className="brand-mark" aria-hidden="true">
+            ₹
+          </span>
+          <div className="brand-text">
+            <h1>FairShare Ledger</h1>
+            <p>Exact paise splitting with a deterministic settlement plan.</p>
+          </div>
+        </div>
+        <span className="local-badge" title="All data stays in this browser.">
+          Local-only · no account
+        </span>
       </header>
 
       {storageError && (
@@ -56,16 +63,20 @@ export default function App() {
         {status}
       </p>
 
-      <main className="grid">
-        <ParticipantsPanel ledger={ledger} onChange={setLedger} />
-        <ExpenseForm ledger={ledger} onChange={setLedger} />
-        <Dashboard ledger={ledger} />
+      <main className="layout">
+        <div className="col">
+          <ParticipantsPanel ledger={ledger} onChange={setLedger} />
+          <ExpenseForm ledger={ledger} onChange={setLedger} />
+          <DataControls
+            ledger={ledger}
+            onReplace={setLedger}
+            onStatus={setStatus}
+          />
+        </div>
+        <div className="col">
+          <Dashboard ledger={ledger} />
+        </div>
         <ExpenseList ledger={ledger} onChange={setLedger} />
-        <DataControls
-          ledger={ledger}
-          onReplace={setLedger}
-          onStatus={setStatus}
-        />
       </main>
     </div>
   );

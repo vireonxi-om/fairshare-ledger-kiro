@@ -65,8 +65,8 @@ export function DataControls({ ledger, onReplace, onStatus }: Props) {
   }
 
   return (
-    <section className="card span-2" aria-labelledby="data-heading">
-      <h2 id="data-heading">Data</h2>
+    <section className="card" aria-labelledby="data-heading">
+      <h2 id="data-heading">Save, import &amp; reset</h2>
       <div className="row">
         <button type="button" onClick={handleExport}>
           Export JSON

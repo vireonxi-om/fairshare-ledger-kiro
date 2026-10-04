@@ -16,7 +16,7 @@ export function ExpenseList({ ledger, onChange }: Props) {
   }
 
   return (
-    <section className="card span-2" aria-labelledby="history-heading">
+    <section className="card span-all" aria-labelledby="history-heading">
       <h2 id="history-heading">Expense history</h2>
       {ledger.expenses.length === 0 ? (
         <p className="empty">No expenses recorded yet.</p>
