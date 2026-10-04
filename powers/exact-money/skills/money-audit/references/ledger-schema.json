@@ -1,0 +1,86 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://fairshare.local/schemas/exact-money/ledger.schema.json",
+  "title": "Normalized Exact-Money Ledger",
+  "description": "Shape the bundled auditor (scripts/audit-ledger.mjs) expects. This is a normalization target, not a prescription for the user's own types. Adapt real exports to this shape, or port specific checks against the real types. All money is integer paise (smallest INR unit).",
+  "type": "object",
+  "required": ["schemaVersion", "currency", "participants", "expenses"],
+  "additionalProperties": false,
+  "properties": {
+    "schemaVersion": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Version of this normalized ledger shape."
+    },
+    "currency": {
+      "type": "string",
+      "const": "INR",
+      "description": "Single currency per ledger. Amounts are integer paise (1/100 INR)."
+    },
+    "participants": {
+      "type": "array",
+      "minItems": 1,
+      "description": "People in the ledger. IDs are opaque stable strings; ordering for allocation is by ascending id.",
+      "items": {
+        "type": "object",
+        "required": ["id", "name"],
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Opaque stable identifier, unique within the ledger."
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Display name."
+          }
+        }
+      }
+    },
+    "expenses": {
+      "type": "array",
+      "description": "Recorded shared costs.",
+      "items": {
+        "type": "object",
+        "required": ["id", "title", "payerId", "amountPaise", "date", "splitMemberIds"],
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Opaque stable expense identifier, unique within the ledger."
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1
+          },
+          "payerId": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Must reference an existing participant id."
+          },
+          "amountPaise": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Positive integer paise. Must stay within Number.MAX_SAFE_INTEGER individually and in aggregate."
+          },
+          "date": {
+            "type": "string",
+            "description": "ISO date (YYYY-MM-DD). Not used in money math; carried for completeness."
+          },
+          "splitMemberIds": {
+            "type": "array",
+            "minItems": 1,
+            "description": "Participants sharing this expense equally. Each must reference an existing participant id; no duplicates.",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        }
+      }
+    }
+  }
+}

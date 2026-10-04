@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "currency": "INR",
+  "participants": [
+    { "id": "p1", "name": "Asha" },
+    { "id": "p2", "name": "Bijay" },
+    { "id": "p3", "name": "Chandni" }
+  ],
+  "expenses": [
+    {
+      "id": "e1",
+      "title": "Groceries",
+      "payerId": "p1",
+      "amountPaise": 1000,
+      "date": "2026-01-05",
+      "splitMemberIds": ["p1", "p2", "p3"]
+    },
+    {
+      "id": "e2",
+      "title": "Taxi",
+      "payerId": "p2",
+      "amountPaise": 457,
+      "date": "2026-01-06",
+      "splitMemberIds": ["p2", "p3"]
+    },
+    {
+      "id": "e3",
+      "title": "Internet",
+      "payerId": "p3",
+      "amountPaise": 99900,
+      "date": "2026-01-07",
+      "splitMemberIds": ["p1", "p2", "p3"]
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "exact-money",
+  "version": "1.0.0",
+  "description": "Audit and design exact integer money handling: minor-unit (paise/cents) representation, deterministic remainder allocation, overflow bounds, precise decimal parsing, and settlement conservation checks for ledger and splitting code.",
+  "author": {
+    "name": "FairShare Ledger project"
+  },
+  "license": "MIT",
+  "keywords": [
+    "money",
+    "paise",
+    "cents",
+    "minor-unit",
+    "integer-money",
+    "rounding",
+    "remainder",
+    "split",
+    "settlement",
+    "ledger",
+    "overflow",
+    "determinism",
+    "currency",
+    "decimal-parsing",
+    "property-testing"
+  ]
+}

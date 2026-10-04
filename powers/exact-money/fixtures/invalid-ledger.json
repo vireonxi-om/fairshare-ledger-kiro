@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "currency": "INR",
+  "participants": [
+    { "id": "p1", "name": "Asha" },
+    { "id": "p2", "name": "Bijay" }
+  ],
+  "expenses": [
+    {
+      "id": "e1",
+      "title": "Dinner",
+      "payerId": "p1",
+      "amountPaise": 50000,
+      "date": "2026-02-01",
+      "splitMemberIds": ["p1", "p2", "p9-ghost"]
+    },
+    {
+      "id": "e2",
+      "title": "Fractional paisa",
+      "payerId": "p2",
+      "amountPaise": 12.5,
+      "date": "2026-02-02",
+      "splitMemberIds": ["p1", "p2"]
+    }
+  ]
+}
