@@ -100,3 +100,9 @@ JSON. Whether it actually **fired** on turn completion is left **pending**:
 
 This note records configuration only; the operator should verify the actual
 trigger against a genuine record before marking trigger status as confirmed.
+
+## Operator verification after turn completion
+
+The configured custom-agent `stop` hook actually ran automatically after the corrected Kiro CLI turn. The operator found and read the genuine privacy-filtered run record `.execution/hook-runs/typecheck-2026-10-04T11-10-02-492Z.json`. It reports trigger `stop`, command `npm run typecheck`, status `passed`, exit code 0, duration 955 ms, and actual clean TypeScript output. The wrapper was not manually invoked for this run. The earlier simulated skip-path record was removed during setup and is not this evidence.
+
+Run time: October 4, 2026, 4:40:02 p.m. IST. The raw private record is gitignored; a reviewed copy is saved beside this document. Lesson hook execution is now verified for the installed CLI custom agent. The standalone PascalCase `Stop` file is retained for current IDE/Web compatibility; actual local trigger evidence comes from the agent's lowercase `stop` configuration.

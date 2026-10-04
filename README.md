@@ -16,13 +16,13 @@ server, no tracking.
 - Versioned local persistence with safe JSON **import/export**. Import validates
   the entire document before applying and can never partially overwrite a valid
   ledger. Explicit **reset** and **sample data** actions.
-- Responsive layout, dark-mode aware, keyboard operable, semantic labels and
+- Responsive layout, keyboard operable, semantic labels and
   accessible empty/error states. No remote API or analytics.
 
 ## Money and correctness model
 - Amounts are integer paise end to end. Decimal text is parsed to paise with
   string operations (no floating-point money math); INR formatting happens only
-  at the display edge via `Intl.NumberFormat("en-IN")`.
+  at the display edge with integer quotient/remainder and `Intl.NumberFormat("en-IN")` grouping.
 - **Balances** sum to exactly zero. **Settlement** produces positive-integer
   transfers, no self-transfers, and at most `n − 1` transfers for `n`
   participants with non-zero balances, and clears every balance to zero.
@@ -46,7 +46,7 @@ src/
 Requires Node 20.19+ or 22.12+ (Vite 8 / Vitest 5 toolchain) and npm.
 
 ```bash
-npm install
+npm ci
 npm run dev        # start the dev server
 ```
 
@@ -60,10 +60,16 @@ npm run typecheck  # tsc --noEmit
 ```
 
 ## Testing
-Phase 1 ships example (unit) tests for the domain and persistence layers under
-`src/**/*.test.ts`. Property-based tests (fast-check) implementing the P1–P9
-correctness properties are scheduled for a later phase and are not included here.
+The current verified suite has 63 example and integration tests: domain and persistence suites under `src/**/*.test.ts`, plus a real App StrictMode regression under `src/App.test.tsx`. `npm run test` runs separate Node and jsdom projects. Property-based tests are still pending the entrant's Kiro IDE session; see [the exact handoff](docs/IDE-PROPERTY-TEST-HANDOFF.md).
 
 ## Privacy
 All ledger data stays in your browser's localStorage. The app makes no network
 calls for ledger data and includes no analytics or tracking.
+
+## Kiro development and evidence
+
+Kiro CLI created the specs, steering, application and tests, then the purpose-built money-guardian agent reproduced and fixed actual correctness/storage bugs. A real paid Kiro Web sandbox session audited the production sample data and produced a reviewed documentation PR. Codex coordinated research, prompts, browser setup, review, git and submission preparation.
+
+See [lesson evidence map](docs/LESSON-EVIDENCE.md), [cloud sample audit](docs/MONEY-REVIEW.md), and the original [Exact Money power](powers/exact-money/README.md) with its [public manifest](powers/exact-money/plugin.json). The power includes a substantive audit skill, references, independent fixture auditor and verification runner.
+
+The challenge entry is still in preparation. IDE property evidence, final demo, social post, entrant eligibility confirmation and final form submission remain pending. Reviewer acceptance and any credit award are not guaranteed.

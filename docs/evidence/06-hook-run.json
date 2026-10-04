@@ -1,0 +1,11 @@
+{
+  "timestamp": "2026-10-04T11:10:02.492Z",
+  "trigger": "stop",
+  "action": "typecheck",
+  "command": "npm run typecheck",
+  "status": "passed",
+  "exitCode": 0,
+  "durationMs": 955,
+  "output": "\n> fairshare-ledger@0.1.0 typecheck\n> tsc --noEmit\n\n",
+  "outputTruncated": false
+}

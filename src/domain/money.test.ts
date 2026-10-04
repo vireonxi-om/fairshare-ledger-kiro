@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { parseMoneyToPaise, formatPaise } from "./money";
-import { MAX_EXPENSE_PAISE } from "./types";
+import { MAX_EXPENSE_PAISE, MAX_LEDGER_TOTAL_PAISE } from "./types";
 
 /**
  * Independent BigInt reference for the parse contract. Mirrors the regex but
@@ -107,5 +107,69 @@ describe("formatPaise", () => {
       expect(paise).not.toBeNull();
       expect(formatPaise(paise as number)).toBe(expected);
     }
+  });
+
+  /**
+   * BigInt oracle for formatting: derives the exact two-digit paisa remainder
+   * with arbitrary-precision integers. Any disagreement with formatPaise's
+   * trailing cents signals the float precision bug this fix removes.
+   */
+  function formatPaisaRemainderOracle(paise: bigint): string {
+    const abs = paise < 0n ? -paise : paise;
+    const rem = abs % 100n;
+    return rem.toString().padStart(2, "0");
+  }
+
+  it("keeps the paisa remainder exact at the aggregate limit (regression)", () => {
+    // The former `paise / 100` implementation rendered this as ...999.98,
+    // silently losing a paisa; integer quotient/remainder must give ...999.99.
+    const nearMax = MAX_LEDGER_TOTAL_PAISE - 1; // 8_999_999_999_999_999
+    const out = formatPaise(nearMax);
+    expect(out.endsWith(".99")).toBe(true);
+    expect(out).toBe("₹8,99,99,99,99,99,999.99");
+    // Agreement with the independent BigInt oracle for the cents component.
+    expect(out.slice(-2)).toBe(formatPaisaRemainderOracle(BigInt(nearMax)));
+  });
+
+  it("formats the exact aggregate maximum without losing paise", () => {
+    expect(formatPaise(MAX_LEDGER_TOTAL_PAISE)).toBe("₹9,00,00,00,00,00,000.00");
+    expect(formatPaise(MAX_LEDGER_TOTAL_PAISE - 99)).toBe(
+      "₹8,99,99,99,99,99,999.01",
+    );
+  });
+
+  it("formats large negative aggregates exactly, including the trailing paisa", () => {
+    const nearMaxNeg = -(MAX_LEDGER_TOTAL_PAISE - 1);
+    const out = formatPaise(nearMaxNeg);
+    expect(out).toBe("-₹8,99,99,99,99,99,999.99");
+    expect(out.slice(-2)).toBe(formatPaisaRemainderOracle(BigInt(nearMaxNeg)));
+  });
+
+  it("agrees with a BigInt oracle on the paisa component across magnitudes", () => {
+    const samples = [
+      0,
+      5,
+      99,
+      100,
+      123405,
+      -1,
+      -99,
+      -123405,
+      MAX_LEDGER_TOTAL_PAISE - 1,
+      MAX_LEDGER_TOTAL_PAISE - 50,
+      MAX_LEDGER_TOTAL_PAISE,
+      -(MAX_LEDGER_TOTAL_PAISE - 1),
+    ];
+    for (const p of samples) {
+      expect(formatPaise(p).slice(-2)).toBe(
+        formatPaisaRemainderOracle(BigInt(p)),
+      );
+    }
+  });
+
+  it("rejects non-integer input instead of silently rounding", () => {
+    expect(() => formatPaise(10.5)).toThrow(RangeError);
+    expect(() => formatPaise(Number.NaN)).toThrow(RangeError);
+    expect(() => formatPaise(Infinity)).toThrow(RangeError);
   });
 });

@@ -49,21 +49,45 @@ export function parseMoneyToPaise(text: string): number | null {
   return paise;
 }
 
-const INR_FORMAT = new Intl.NumberFormat("en-IN", {
-  style: "currency",
-  currency: "INR",
-  minimumFractionDigits: 2,
-  maximumFractionDigits: 2,
+/**
+ * Group the integer rupee part with the Indian digit-grouping convention
+ * (en-IN): the first group is three digits, then groups of two. We format the
+ * rupees integer directly rather than dividing paise by 100, so no float ever
+ * touches the money value — the ₹ symbol and grouping are the only locale
+ * concern. Intl.NumberFormat on an *integer* rupee count is exact for every
+ * value within our aggregate bound (well under MAX_SAFE_INTEGER).
+ */
+const INR_RUPEE_GROUP = new Intl.NumberFormat("en-IN", {
+  useGrouping: true,
+  maximumFractionDigits: 0,
 });
 
 /**
  * Format integer paise as an INR currency string, e.g. 123405 → "₹1,234.05".
  * Negative paise are formatted with a leading minus, e.g. -500 → "-₹5.00".
+ *
+ * Exactness: the rupee and paisa components are derived with integer division
+ * and remainder, never `paise / 100`. A float rupee value loses a paisa near
+ * the aggregate bound (e.g. 8_999_999_999_999_999 paise would render as
+ * ...999.98 instead of ...999.99 if divided as a Number). Splitting with
+ * integer `Math.trunc`/remainder keeps the two-digit paisa exact for every
+ * accepted value, including values at the aggregate limit and negatives.
+ *
+ * Rejects non-integer / non-finite input by throwing rather than silently
+ * rounding, so a precision bug upstream surfaces instead of being masked.
  */
 export function formatPaise(paise: number): string {
   if (!Number.isInteger(paise)) {
-    // Defensive: domain should only ever hand us integers.
-    paise = Math.round(paise);
+    throw new RangeError(
+      `formatPaise expects an integer paise value, received ${paise}`,
+    );
   }
-  return INR_FORMAT.format(paise / 100);
+  const negative = paise < 0;
+  const abs = Math.abs(paise);
+  // Integer split: exact for all safe integers (no division of the paise float).
+  const rupees = Math.trunc(abs / 100);
+  const paisaRemainder = abs - rupees * 100;
+  const rupeeStr = INR_RUPEE_GROUP.format(rupees);
+  const paisaStr = String(paisaRemainder).padStart(2, "0");
+  return `${negative ? "-" : ""}₹${rupeeStr}.${paisaStr}`;
 }
