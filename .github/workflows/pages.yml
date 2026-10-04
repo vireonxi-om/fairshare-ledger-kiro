@@ -1,0 +1,100 @@
+# Build and deploy FairShare Ledger to GitHub Pages.
+#
+# This workflow is scoped deliberately:
+#   - Triggers only on pushes to `main` and manual dispatch. There is no
+#     schedule, so it never produces unattended/scheduled commits or runs.
+#   - It builds the Vite production bundle and publishes only `dist/` as the
+#     Pages artifact. No private directories (e.g. `.execution/`) are uploaded.
+#   - Elevated permissions (`pages: write`, `id-token: write`) are granted
+#     ONLY to the deploy job, not globally.
+#
+# Action versions use the current major tags of the latest official releases,
+# verified from each action's GitHub Releases page on 2026-10-04:
+#   actions/checkout@v7            -> latest release v7.0.1
+#   actions/setup-node@v7          -> latest release v7.0.0
+#   actions/configure-pages@v5     -> latest release v5 (Node 24)
+#   actions/upload-pages-artifact@v5 -> latest release v5.0.0
+#   actions/deploy-pages@v5        -> latest release v5.0.1
+# GitHub's own custom-workflow docs example currently shows older majors
+# (checkout@v6, configure-pages@v5, upload-pages-artifact@v4, deploy-pages@v4);
+# the pins above track the newer verified releases.
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# Only one Pages deployment at a time; let an in-progress run finish rather
+# than cancelling it mid-deploy.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+# Default to least privilege; the deploy job widens this for itself only.
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup Node
+        uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests
+        run: npm run test
+
+      - name: Type-check
+        run: npm run typecheck
+
+      # The project Pages URL is https://<owner>.github.io/fairshare-ledger-kiro/,
+      # so assets must resolve under that sub-path. We pass the base at build
+      # time instead of hardcoding it in vite.config.ts, keeping local dev at "/".
+      - name: Build
+        run: npm run build -- --base=/fairshare-ledger-kiro/
+
+      # Copy the demo video into the published bundle only if it exists. The
+      # demo is not created yet, so this is a no-op today and must not fail.
+      - name: Include demo video if present
+        run: |
+          if [ -f docs/demo/fairshare-demo.mp4 ]; then
+            mkdir -p dist/demo
+            cp docs/demo/fairshare-demo.mp4 dist/demo/fairshare-demo.mp4
+            echo "Copied demo video into dist/demo/."
+          else
+            echo "No docs/demo/fairshare-demo.mp4 found; skipping."
+          fi
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v5
+        with:
+          # Publish ONLY the built site. Nothing else from the repo is uploaded.
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    # Elevated permissions live here, scoped to the deploy job only.
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v5
