@@ -3,7 +3,7 @@
 Date: 2026-10-04
 Scope: Verify finished money bounds and the normalized Exact Money fixture
 assertions without changing app source. Record the custom agent's `stop`
-hook configuration, with trigger status left **pending** for operator review.
+hook configuration, initially left pending and then **verified by the operator** against the real automatic run record (see final section).
 
 ## Money bounds (verified by reading source, no edits)
 
@@ -87,7 +87,7 @@ The corresponding hook definition `.kiro/hooks/typecheck-after-turn.json`
 lock is active, and records a privacy-safe run record under the gitignored
 `.execution/hook-runs/`.
 
-### Trigger status: PENDING
+### Trigger status during agent turn: initially pending, now verified
 
 The hook is **configured**, as confirmed above by reading the agent and hook
 JSON. Whether it actually **fired** on turn completion is left **pending**:
